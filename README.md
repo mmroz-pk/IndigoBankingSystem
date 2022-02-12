@@ -23,6 +23,7 @@ An IBS account consists of:
 
 All account data is stored in folders named after their Account Numbers and inside, there are files which
 contain the PIN and Balance. You can find these folders in the /database catalog.
+
 ---
 How to run IBS?
 -
