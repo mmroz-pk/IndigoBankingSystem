@@ -56,32 +56,39 @@ def login(username, password):
 
 
 def deposit(username):
-    deposit_amount = input("How much would you like to deposit?\n> ")
+    deposit_amount = float(input("How much would you like to deposit?\n> "))
+    deposit_amount = float("{:.3f}".format(deposit_amount))
 
-    deposit_read = open(f"./database/{username}/Balance", "r").read()
-    deposit_to = open(f"./database/{username}/Balance", "w")
+    if deposit_amount <= 0:
+        print("You cannot deposit zero, negative or insufficient amounts.")
+        deposit_amount = 0
+    else:
+        deposit_read = open(f"./database/{username}/Balance", "r").read()
+        deposit_to = open(f"./database/{username}/Balance", "w")
 
-    deposit_add = float(deposit_read) + float(deposit_amount)
-    deposit_add = float("{:.2f}".format(deposit_add))
+        deposit_add = float(deposit_read) + float(deposit_amount)
+        deposit_add = float("{:.3f}".format(deposit_add))
 
-    deposit_to.write(str(float(deposit_add)))
+        deposit_to.write(str(float(deposit_add)))
 
-    print(f"You have deposited: ${deposit_amount}")
+        print(f"You have deposited: ${deposit_amount}")
 
 
 def withdraw(username):
     current_balance = open(f"./database/{username}/Balance", "r").read()
     print(f"Available Balance: {current_balance}")
 
-    withdraw_amount = input("How much would you like to withdraw?\n> ")
+    withdraw_amount = float(input("How much would you like to withdraw?\n> "))
 
     deposit_subtract = float(current_balance) - float(withdraw_amount)
     deposit_subtract = float("{:.2f}".format(deposit_subtract))
+    withdraw_amount = float("{:.2f}".format(withdraw_amount))
 
-    if deposit_subtract <= -1:
-        print("You don't have enough funds to withdraw that sort of amount")
+    if deposit_subtract <= -1 or withdraw_amount <= 0:
+        print("You cannot withdraw zero, negative or insufficient amounts.")
+        withdraw_amount = 0
+        deposit_subtract = 0
     else:
-
         update_balance = open(f"./database/{username}/Balance", "w")
         update_balance.write(str(float(deposit_subtract)))
 
@@ -92,13 +99,14 @@ def transfer(username):
     current_balance = open(f"./database/{username}/Balance", "r").read()
     print(f"Available Balance: {current_balance}")
 
-    transfer_amount = input("How much would you like to transfer?\n> ")
+    transfer_amount = float(input("How much would you like to transfer?\n> "))
+    transfer_amount = float("{:.3f}".format(transfer_amount))
 
     deposit_subtract = float(current_balance) - float(transfer_amount)
-    deposit_subtract = float("{:.2f}".format(deposit_subtract))
+    deposit_subtract = float("{:.3f}".format(deposit_subtract))
 
-    if deposit_subtract <= -1:
-        print("You don't have enough funds to execute the transfer")
+    if deposit_subtract <= -1 or current_balance == "0" or transfer_amount <= 0:
+        print("You cannot transfer zero, negative or insufficient amounts")
     else:
         receiver = input("Enter the Reciever's 10 Digit Account Number:\n> ")
         check_receiver = verify(receiver)
@@ -108,7 +116,7 @@ def transfer(username):
             receiver_balance = open(f"./database/{receiver}/Balance", "r").read()
 
             receiver_add = float(receiver_balance) + float(transfer_amount)
-            receiver_add = float("{:.2f}".format(receiver_add))
+            receiver_add = float("{:.3f}".format(receiver_add))
 
             transfer_to_receiver = open(f"./database/{receiver}/Balance", "w")
             transfer_to_receiver.write(str(float(receiver_add)))
@@ -116,7 +124,7 @@ def transfer(username):
             update_balance = open(f"./database/{username}/Balance", "w")
             update_balance.write(str(float(deposit_subtract)))
 
-            print(f"You have transfern: ${transfer_amount}")
+            print(f"You have transfered: ${transfer_amount}")
 
 
 def check_balance(username):
